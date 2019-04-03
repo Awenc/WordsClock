@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <title>时钟</title>
+</head>
+<style>
+    *{
+        margin:0;
+        padding:0;
+    }
+    html,body{
+        position: relative;
+        width: 100%;
+        height:100%;
+        background: black;
+    }
+    .Hours{
+        position: absolute;
+        width: 200px;
+        height:200px;
+        /* border:1px solid #fff; */
+        left:50%;
+        margin-left:-100px;
+        top:50%;
+        margin-top:-100px;
+    }
+    .text{
+        position: absolute;
+        width: 15px; 
+        height:100px;
+        left:50%;
+        margin-left:-7.5px;
+        top:0px;
+        font-size: 15px; 
+        word-wrap: break-word; 
+        letter-spacing: 20px;
+        color:rgb(111,111,111);
+        /* border:1px solid rgb(240,240,240); */
+        transform-origin:bottom center;
+        transition: 1s;
+        /* transform: rotate() */
+    }
+    .Minue{
+        position: absolute;
+        width: 400px;
+        height:400px;
+        left:50%;
+        margin-left:-200px;
+        top:50%;
+        margin-top:-200px; 
+        transition: 0.5s;
+    }
+    .Minue .text{
+        height:200px;
+    }
+    .Second{
+        position: absolute;
+        width: 600px;
+        height:600px;
+        left:50%;
+        margin-left:-300px;
+        top:50%;
+        margin-top:-300px; 
+        transition: 0.5s;
+        /* transform: rotate(10deg); */
+    }
+    .Second .text{
+        height:300px;
+       
+    }
+</style>
+<body>
+    <div class="Hours"></div>
+    <div class="Minue"></div>
+    <div class="Second"></div>
+</body>
+<script>
+    const Hours = 12;
+    const Minue = 60;
+    const Second =60;
+    const Words=['零', '一', '二', '三', '四', '五', '六', '七', '八', '九','十'];
+    //创建时分秒
+    Create(Hours,"Hours",false);
+    Create(Minue,"Minue"),false;
+    Create(Second,"Second",true);
+
+    //获取当前时间
+    let date = new Date();
+    let nowHours = (date.getHours()>12 ?date.getHours()-12:date.getHours())-1 ;
+    let nowMinue = (date.getMinutes()-1);
+    let nowSecond = (date.getSeconds()-1);
+
+    //初始旋转角度
+    let initialSecondAngle = (360/Hours*(nowHours+1)-360/Second*(Second-nowSecond-1));
+    ChangeView();
+    let secondAngrl=0
+    setInterval(()=>{
+        //过一秒旋转
+        $(".Second .text").eq(nowSecond).css({"color":"rgb(111,111,111)"});  
+        if(nowSecond<60){          
+            nowSecond++;
+            initialSecondAngle +=360/Second;       
+        }else{
+            nowSecond=0;
+            $(".Minue .text").eq(nowMinue).css({"color":"rgb(111,111,111)"});    
+            nowMinue++;
+        }
+        
+        ChangeView();
+    },1000)
+
+    //根据当前时间点亮节点
+    function ChangeView(){
+        $(".Hours .text").eq(nowHours).css({"color":"#fff"});
+        $(".Minue .text").eq(nowMinue).css({"color":"#fff"});
+        $(".Minue").css({
+            "transform":"rotate("+(360/Hours*(nowHours+1)-360/Minue*(nowMinue+1))+"deg)"
+        })
+        $(".Second .text").eq(nowSecond).css({"color":"#fff"});
+        $(".Second").css({
+            "transform":"rotate("+initialSecondAngle+"deg)"
+        })
+    }
+    //渲染dom节点
+    function Create(time,parent,Clockwise){
+       let angle = 360/time;
+       let ShowWords='';
+       switch(parent){
+          case "Hours":ShowWords="点" ;break; 
+          case "Minue":ShowWords="分" ;break; 
+          case "Second":ShowWords="秒" ;break; 
+       }
+       for(let i = 0 ;i<time;i++){
+            let curText = $("<div class='text'></div>");
+            curText.html(ChangeNumToWords(i+1)+ShowWords);
+            if(!Clockwise){
+                curText.css({
+                    "transform":"rotate("+((i+1)*angle)+"deg)"
+                })
+            }else{
+                curText.css({
+                    "transform":"rotate("+(-(i+1)*angle)+"deg)"
+                }) 
+            }
+            
+            $("."+parent+"").append(curText);
+       } 
+    }
+    //将阿拉伯数字转换为中文数字
+    function ChangeNumToWords(num){
+        let WordNum='';
+        if(num % 10 == 0 && num !=10){
+            WordNum = Words[num / 10]+"十";
+            return WordNum
+        }
+
+        if(num < 11){
+            WordNum = Words[num];
+        }else{
+            if(num<20){
+                WordNum ="十"+Words[num-10];
+            }else{
+                WordNum=Words[Math.floor(num/10)]+ "十" + Words[num%10];
+            }
+        }
+    
+     
+        return WordNum;
+    }
+</script>
+</html>
