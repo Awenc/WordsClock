@@ -52,7 +52,7 @@
         margin-left:-200px;
         top:50%;
         margin-top:-200px; 
-        transition: 0.5s;
+        transition: 0.3s;
     }
     .Minue .text{
         height:200px;
@@ -65,7 +65,7 @@
         margin-left:-300px;
         top:50%;
         margin-top:-300px; 
-        transition: 0.5s;
+        transition: 0.3s;
         /* transform: rotate(10deg); */
     }
     .Second .text{
@@ -92,7 +92,7 @@
     let date = new Date();
     let nowHours = (date.getHours()>12 ?date.getHours()-12:date.getHours())-1 ;
     let nowMinue = (date.getMinutes()-1);
-    let nowSecond = (date.getSeconds()-1);
+    let nowSecond = (date.getSeconds());
 
     //初始旋转角度
     let initialSecondAngle = (360/Hours*(nowHours+1)-360/Second*(Second-nowSecond-1));
@@ -101,15 +101,15 @@
     setInterval(()=>{
         //过一秒旋转
         $(".Second .text").eq(nowSecond).css({"color":"rgb(111,111,111)"});  
-        if(nowSecond<60){          
+        if(nowSecond<59){          
             nowSecond++;
-            initialSecondAngle +=360/Second;       
+              
         }else{
             nowSecond=0;
             $(".Minue .text").eq(nowMinue).css({"color":"rgb(111,111,111)"});    
             nowMinue++;
-        }
-        
+        }   
+        initialSecondAngle +=360/Second;                 
         ChangeView();
     },1000)
 
